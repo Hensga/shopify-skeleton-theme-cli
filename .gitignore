@@ -17,3 +17,9 @@ dist/
 .env.local
 .env.development
 .env.production
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
