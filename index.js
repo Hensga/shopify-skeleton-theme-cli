@@ -33,6 +33,7 @@ program
       'footer.liquid',
       'main-product.liquid',
       'main-collection.liquid',
+      'main-list-collections.liquid',
       'main-blog.liquid',
       'main-page.liquid',
       'main-password.liquid',
@@ -49,6 +50,8 @@ program
       'footer.liquid': '<!-- Footer-Inhalt -->',
       'main-product.liquid': '<!-- Haupt-Produkt-Inhalt -->',
       'main-collection.liquid': '<!-- Haupt-Kollektion-Inhalt -->',
+      'main-list-collections.liquid':
+        '<!-- Haupt-Kollektionen-Liste-Inhalt -->',
       'main-blog.liquid': '<!-- Haupt-Blog-Inhalt -->',
       'main-page.liquid': '<!-- Haupt-Seite-Inhalt -->',
       'main-password.liquid': '<!-- Haupt-Passwort-Inhalt -->',
@@ -63,15 +66,10 @@ program
     };
 
     //   Snippets Ordner
-    const snippetsFiles = [
-      'collection-media.liquid',
-      'product-media.liquid',
-      'meta-tags.liquid',
-    ];
+    const snippetsFiles = ['collection-media.liquid', 'product-media.liquid'];
     const snippetFileContents = {
       'collection-media.liquid': '<!-- Kollektion-Media-Inhalt -->',
       'product-media.liquid': '<!-- Produkt-Media-Inhalt -->',
-      'meta-tags.liquid': '<!-- Meta-Tags-Inhalt -->',
     };
 
     //   Templates Ordner
@@ -81,12 +79,10 @@ program
       'blog.liquid',
       'cart.liquid',
       'collection.liquid',
-      'gift-card.liquid',
       'index.liquid',
       'list-collections.liquid',
       'product.liquid',
       'page.liquid',
-      'gift_card.liquid',
       'password.liquid',
       'robots.txt.liquid',
       'search.liquid',
@@ -94,19 +90,17 @@ program
     ];
     const templateFileContents = {
       '404.liquid': '<!-- 404 Seite Inhalt -->',
-      'article.liquid': '<!-- Artikel-Inhalt -->',
-      'blog.liquid': '<!-- Blog-Inhalt -->',
-      'cart.liquid': '<!-- Warenkorb-Inhalt -->',
-      'collection.liquid': '<!-- Kollektion-Inhalt -->',
-      'gift-card.liquid': '<!-- Geschenkkarte-Inhalt -->',
+      'article.liquid': '{% section "main-article" %}',
+      'blog.liquid': '{% section "main-blog" %}',
+      'cart.liquid': '{% section "main-cart" %}',
+      'collection.liquid': '{% section "main-collection" %}',
       'index.liquid': '<!-- Index-Inhalt -->',
-      'list-collections.liquid': '<!-- Kollektionen-Liste-Inhalt -->',
-      'product.liquid': '<!-- Produkt-Inhalt -->',
-      'page.liquid': '<!-- Seite-Inhalt -->',
-      'gift_card.liquid': '<!-- Geschenkkarte-Inhalt -->',
-      'password.liquid': '<!-- Passwort-Inhalt -->',
+      'list-collections.liquid': '{% section "main-list-collections" %}',
+      'product.liquid': '{% section "main-product" %}',
+      'page.liquid': '{% section "main-page" %}',
+      'password.liquid': '{% section "main-password" %}',
       'robots.txt.liquid': '<!-- Robots.txt-Inhalt -->',
-      'search.liquid': '<!-- Suche-Inhalt -->',
+      'search.liquid': '{% section "main-search" %}',
       'metaobject.liquid': '<!-- Meta-Objekt-Inhalt -->',
     };
     //  Customers Ordner
@@ -138,6 +132,11 @@ program
         __dirname,
         'content',
         'theme-content.liquid'
+      );
+      const metaTagsContentPath = path.join(
+        __dirname,
+        'content',
+        'meta-tags.liquid'
       );
 
       // Erstelle Subfolders
@@ -177,6 +176,13 @@ program
         const filePath = path.join(snippetsPath, fileName);
         fs.writeFileSync(filePath, snippetFileContents[fileName]);
       });
+
+      const metaTagsContent = fs.readFileSync(metaTagsContentPath, 'utf8');
+      fs.writeFileSync(
+        path.join(snippetsPath, 'meta-tags.liquid'),
+        metaTagsContent
+      );
+
       templatesFiles.forEach((fileName) => {
         const filePath = path.join(templatesPath, fileName);
         fs.writeFileSync(filePath, templateFileContents[fileName]);
