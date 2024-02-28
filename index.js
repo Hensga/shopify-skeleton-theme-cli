@@ -34,10 +34,10 @@ program
     };
 
     // Layout Ordner
-    const layoutFiles = ['password.liquid'];
-    const layoutFileContents = {
-      'password.liquid': '<!-- Passwort-Inhalt -->',
-    };
+    // const layoutFiles = ['password.liquid'];
+    // const layoutFileContents = {
+    //   'password.liquid': '<!-- Passwort-Inhalt -->',
+    // };
 
     //   Section Ordner
     const sectionsFiles = [
@@ -150,6 +150,11 @@ program
         'content',
         'meta-tags.liquid'
       );
+      const passwordContentPath = path.join(
+        __dirname,
+        'content',
+        'password.liquid'
+      );
 
       // Erstelle Subfolders
       const assetsPath = path.join(themePath, 'assets');
@@ -183,6 +188,12 @@ program
 
       const themeContent = fs.readFileSync(themeContentPath, 'utf8');
       fs.writeFileSync(path.join(layoutPath, 'theme.liquid'), themeContent);
+
+      const passwordContent = fs.readFileSync(passwordContentPath, 'utf8');
+      fs.writeFileSync(
+        path.join(layoutPath, 'password.liquid'),
+        passwordContent
+      );
 
       sectionsFiles.forEach((fileName) => {
         const filePath = path.join(sectionsPath, fileName);
