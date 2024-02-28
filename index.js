@@ -21,6 +21,18 @@ program
       'globals.js': '/* Globale JS */',
     };
 
+    // config Ordner
+    const configFiles = ['settings_data.json'];
+    const configFileContents = {
+      'settings_data.json': '',
+    };
+
+    // Locales Ordner
+    const localesFiles = ['en.default.json'];
+    const localesFileContents = {
+      'en.default.json': '',
+    };
+
     // Layout Ordner
     const layoutFiles = ['password.liquid'];
     const layoutFileContents = {
@@ -142,6 +154,10 @@ program
       // Erstelle Subfolders
       const assetsPath = path.join(themePath, 'assets');
       fs.mkdirSync(assetsPath, { recursive: true });
+      const configPath = path.join(themePath, 'config');
+      fs.mkdirSync(configPath, { recursive: true });
+      const localesPath = path.join(themePath, 'locales');
+      fs.mkdirSync(localesPath, { recursive: true });
       const layoutPath = path.join(themePath, 'layout');
       fs.mkdirSync(layoutPath, { recursive: true });
       const sectionsPath = path.join(themePath, 'sections');
