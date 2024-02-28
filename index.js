@@ -24,7 +24,7 @@ program
     // config Ordner
     const configFiles = ['settings_data.json'];
     const configFileContents = {
-      'settings_data.json': '',
+      'settings_data.json': '[]',
     };
 
     // Locales Ordner
