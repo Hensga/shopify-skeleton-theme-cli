@@ -35,7 +35,5 @@ Replace `<theme-name>` with the name of your theme. This will create a new direc
 
 ## About me
 
----
-
-- [Henning](henninghuth.dev)
-- [Shopify Code Snippets](shop.henninghuth.dev)
+- [Henning](https://henninghuth.dev)
+- [Shopify Code Snippets](https://shop.henninghuth.dev)
