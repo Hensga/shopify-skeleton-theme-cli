@@ -1,229 +1,87 @@
 #!/usr/bin/env node
 
-const { program } = require('commander');
-const fs = require('fs');
-const path = require('path');
+const { program } = require("commander");
+const fs = require("fs");
+const path = require("path");
+const createAssets = require("./lib/assets");
+const createLayouts = require("./lib/layout");
+const createConfig = require("./lib/config");
+const createSections = require("./lib/sections");
+const createSnippets = require("./lib/snippets");
+const createTemplates = require("./lib/templates");
 
 program
-  .name('hh-dev')
-  .description('CLI tool for creating Shopify skeleton theme structure')
-  .version('0.1.0');
+  .name("hh-dev")
+  .description("CLI tool for creating Shopify skeleton theme structure")
+  .version("0.1.0");
 
 program
-  .command('create <theme-name>')
-  .description('Create a new Shopify skeleton theme structure')
+  .command("create <theme-name>")
+  .description("Create a new Shopify skeleton theme structure")
   .action((themeName) => {
     const themePath = path.join(process.cwd(), themeName);
-    // Assets Ordner
-    const assetsFiles = ['globals.css', 'globals.js'];
-    const assetsFileContents = {
-      'globals.css': '/* Globale CSS */',
-      'globals.js': '/* Globale JS */',
-    };
+    const sectionsSourcePath = path.join(__dirname, "content", "sections");
+    const assetsSourcePath = path.join(__dirname, "content", "assets");
+    const snippetsSourcePath = path.join(__dirname, "content", "snippets");
+    const templatesSourcePath = path.join(__dirname, "content", "templates");
+    const layoutsSourcePath = path.join(__dirname, "content", "layout");
 
-    // config Ordner
-    const configFiles = ['settings_data.json'];
-    const configFileContents = {
-      'settings_data.json': '[]',
-    };
-
-    // Locales Ordner
-    const localesFiles = ['en.default.json'];
-    const localesFileContents = {
-      'en.default.json': '',
-    };
-
-    // Layout Ordner
-    // const layoutFiles = ['password.liquid'];
-    // const layoutFileContents = {
-    //   'password.liquid': '<!-- Passwort-Inhalt -->',
-    // };
-
-    //   Section Ordner
-    const sectionsFiles = [
-      'header.liquid',
-      'footer.liquid',
-      'main-product.liquid',
-      'main-collection.liquid',
-      'main-list-collections.liquid',
-      'main-blog.liquid',
-      'main-page.liquid',
-      'main-password.liquid',
-      'main-login.liquid',
-      'main-register.liquid',
-      'main-account.liquid',
-      'main-active-account.liquid',
-      'main-reset-password.liquid',
-      'main-search.liquid',
-      'main-order.liquid',
-    ];
-    const sectionFileContents = {
-      'header.liquid': '<!-- Header-Inhalt -->',
-      'footer.liquid': '<!-- Footer-Inhalt -->',
-      'main-product.liquid': '<!-- Haupt-Produkt-Inhalt -->',
-      'main-collection.liquid': '<!-- Haupt-Kollektion-Inhalt -->',
-      'main-list-collections.liquid':
-        '<!-- Haupt-Kollektionen-Liste-Inhalt -->',
-      'main-blog.liquid': '<!-- Haupt-Blog-Inhalt -->',
-      'main-page.liquid': '<!-- Haupt-Seite-Inhalt -->',
-      'main-password.liquid': '<!-- Haupt-Passwort-Inhalt -->',
-      'main-login.liquid': '<!-- Haupt-Login-Inhalt -->',
-      'main-register.liquid': '<!-- Haupt-Registrieren-Inhalt -->',
-      'main-account.liquid': '<!-- Haupt-Account-Inhalt -->',
-      'main-active-account.liquid': '<!-- Haupt-Account aktivieren-Inhalt -->',
-      'main-reset-password.liquid':
-        '<!-- Haupt-Passwort zurücksetzen-Inhalt -->',
-      'main-search.liquid': '<!-- Haupt-Suche-Inhalt -->',
-      'main-order.liquid': '<!-- Haupt-Bestell-Inhalt -->',
-    };
-
-    //   Snippets Ordner
-    const snippetsFiles = ['collection-media.liquid', 'product-media.liquid'];
-    const snippetFileContents = {
-      'collection-media.liquid': '<!-- Kollektion-Media-Inhalt -->',
-      'product-media.liquid': '<!-- Produkt-Media-Inhalt -->',
-    };
-
-    //   Templates Ordner
-    const templatesFiles = [
-      '404.liquid',
-      'article.liquid',
-      'blog.liquid',
-      'cart.liquid',
-      'collection.liquid',
-      'index.liquid',
-      'list-collections.liquid',
-      'product.liquid',
-      'page.liquid',
-      'password.liquid',
-      'robots.txt.liquid',
-      'search.liquid',
-      'metaobject.liquid',
-    ];
-    const templateFileContents = {
-      '404.liquid': '<!-- 404 Seite Inhalt -->',
-      'article.liquid': '{% section "main-article" %}',
-      'blog.liquid': '{% section "main-blog" %}',
-      'cart.liquid': '{% section "main-cart" %}',
-      'collection.liquid': '{% section "main-collection" %}',
-      'index.liquid': '<!-- Index-Inhalt -->',
-      'list-collections.liquid': '{% section "main-list-collections" %}',
-      'product.liquid': '{% section "main-product" %}',
-      'page.liquid': '{% section "main-page" %}',
-      'password.liquid': '{% section "main-password" %}',
-      'robots.txt.liquid': '<!-- Robots.txt-Inhalt -->',
-      'search.liquid': '{% section "main-search" %}',
-      'metaobject.liquid': '<!-- Meta-Objekt-Inhalt -->',
-    };
-    //  Customers Ordner
-    const customersFiles = [
-      'account.liquid',
-      'activate_account.liquid',
-      'addresses.liquid',
-      'login.liquid',
-      'order.liquid',
-      'register.liquid',
-      'reset_password.liquid',
-    ];
-    const customerFileContents = {
-      'account.liquid': '<!-- Account-Inhalt -->',
-      'activate_account.liquid': '<!-- Account aktivieren-Inhalt -->',
-      'addresses.liquid': '<!-- Adressen-Inhalt -->',
-      'login.liquid': '<!-- Login-Inhalt -->',
-      'order.liquid': '<!-- Bestell-Inhalt -->',
-      'register.liquid': '<!-- Registrieren-Inhalt -->',
-      'reset_password.liquid': '<!-- Passwort zurücksetzen-Inhalt -->',
-    };
-
-    // Erstelle den Hauptordner
     if (!fs.existsSync(themePath)) {
       fs.mkdirSync(themePath, { recursive: true });
 
-      // Einlesen der größeren Dateien. Es wird der absolute Pfad benötigt, damit die Datei, egal von wo der Befehl ausgeführt wird, gefunden wird.
-      const themeContentPath = path.join(
-        __dirname,
-        'content',
-        'theme-content.liquid'
+      createAssets(themePath, assetsSourcePath);
+      createLayouts(themePath, layoutsSourcePath);
+      createConfig(themePath);
+      createSections(themePath, sectionsSourcePath);
+      createSnippets(themePath, snippetsSourcePath);
+      createTemplates(themePath, templatesSourcePath);
+
+      function countFiles(directory) {
+        return fs.readdirSync(directory).length;
+      }
+      console.info(
+        `Theme "${themeName}" was created successfully. Happy coding! 🚀`,
       );
-      const metaTagsContentPath = path.join(
-        __dirname,
-        'content',
-        'meta-tags.liquid'
+      console.info();
+      console.info(`Assets copied: ${countFiles(assetsSourcePath)} files.`);
+      console.info(`Layouts set up: ${countFiles(layoutsSourcePath)} files.`);
+      console.info(`Configurations initialized.`);
+      console.info(
+        `Sections created: ${countFiles(sectionsSourcePath)} files.`,
       );
-      const passwordContentPath = path.join(
-        __dirname,
-        'content',
-        'password.liquid'
+      console.info(`Snippets added: ${countFiles(snippetsSourcePath)} files.`);
+      console.info(
+        `Templates prepared: ${countFiles(templatesSourcePath)} files.`,
       );
+      console.info();
+      console.info("You can now begin customizing your theme!");
 
-      // Erstelle Subfolders
-      const assetsPath = path.join(themePath, 'assets');
-      fs.mkdirSync(assetsPath, { recursive: true });
-      const configPath = path.join(themePath, 'config');
-      fs.mkdirSync(configPath, { recursive: true });
-      const localesPath = path.join(themePath, 'locales');
-      fs.mkdirSync(localesPath, { recursive: true });
-      const layoutPath = path.join(themePath, 'layout');
-      fs.mkdirSync(layoutPath, { recursive: true });
-      const sectionsPath = path.join(themePath, 'sections');
-      fs.mkdirSync(sectionsPath, { recursive: true });
-      const snippetsPath = path.join(themePath, 'snippets');
-      fs.mkdirSync(snippetsPath, { recursive: true });
-      const templatesPath = path.join(themePath, 'templates');
-      fs.mkdirSync(templatesPath, { recursive: true });
-      // Subfolder für customers
-      const customersPath = path.join(templatesPath, 'customers');
-      fs.mkdirSync(customersPath, { recursive: true });
-
-      // Erstelle Dateien in den Subfolders
-      assetsFiles.forEach((fileName) => {
-        const filePath = path.join(assetsPath, fileName);
-        fs.writeFileSync(filePath, assetsFileContents[fileName]);
-      });
-
-      layoutFiles.forEach((fileName) => {
-        const filePath = path.join(layoutPath, fileName);
-        fs.writeFileSync(filePath, layoutFileContents[fileName]);
-      });
-
-      const themeContent = fs.readFileSync(themeContentPath, 'utf8');
-      fs.writeFileSync(path.join(layoutPath, 'theme.liquid'), themeContent);
-
-      const passwordContent = fs.readFileSync(passwordContentPath, 'utf8');
-      fs.writeFileSync(
-        path.join(layoutPath, 'password.liquid'),
-        passwordContent
+      console.info();
+      console.info(
+        "To begin developing your theme, navigate to your theme directory:",
+      );
+      console.info(`cd ${themePath}`);
+      console.info(
+        "Run your local development environment or upload the theme to Shopify to see it in action.",
       );
 
-      sectionsFiles.forEach((fileName) => {
-        const filePath = path.join(sectionsPath, fileName);
-        fs.writeFileSync(filePath, sectionFileContents[fileName]);
-      });
-      snippetsFiles.forEach((fileName) => {
-        const filePath = path.join(snippetsPath, fileName);
-        fs.writeFileSync(filePath, snippetFileContents[fileName]);
-      });
+      console.info();
+      console.info("For more information on developing Shopify themes, visit:");
+      console.info("https://shopify.dev/docs/themes");
 
-      const metaTagsContent = fs.readFileSync(metaTagsContentPath, 'utf8');
-      fs.writeFileSync(
-        path.join(snippetsPath, 'meta-tags.liquid'),
-        metaTagsContent
+      console.info(
+        "If you encounter any issues, please refer to the troubleshooting guide:",
       );
-
-      templatesFiles.forEach((fileName) => {
-        const filePath = path.join(templatesPath, fileName);
-        fs.writeFileSync(filePath, templateFileContents[fileName]);
-      });
-      customersFiles.forEach((fileName) => {
-        const filePath = path.join(customersPath, fileName);
-        fs.writeFileSync(filePath, customerFileContents[fileName]);
-      });
-
-      console.log(
-        `Theme "${themeName}" was created successfully. Happy coding! 🚀`
+      console.info("https://shopify.dev/docs/themes/troubleshooting");
+      console.info();
+      console.info(
+        "For questions or to provide feedback, please refer to the GitHub repository:",
       );
+      console.info("https://github.com/Hensga/shopify-skeleton-theme-cli");
     } else {
-      console.error(`Ordner "${themeName}" existiert bereits.`);
+      console.error(
+        `Theme "${themeName}" already exists. Please choose another name.`,
+      );
     }
   });
 

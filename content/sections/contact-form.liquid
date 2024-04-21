@@ -1,0 +1,169 @@
+<section class="w-full bg-[var(--Grau)]">
+  <div class="relative isolate container">
+    <div class="mx-auto grid grid-cols-1 lg:grid-cols-2 rounded-3xl ring-2 ring-[var(--Black)]">
+      <div class="relative px-6 pb-20 pt-24 sm:pt-32 lg:static lg:px-12 lg:py-32 border-b-2 lg:border-r-2 lg:border-b-0 border-dashed border-[var(--Black)]">
+        {% for block in section.blocks %}
+          <div class="mx-auto">
+            {% case block.type %}
+              {% when 'headline' %}
+                <h2 class="h5 {% unless forloop.first %} mt-12 {% endunless %}">{{ block.settings.headline }}</h2>
+              {% when 'paragraph' %}
+                <p class="mt-4">{{ block.settings.paragraph }}</p>
+            {% endcase %}
+          </div>
+        {% endfor %}        
+      </div>
+
+      {% form 'contact', id: 'ContactForm', class: 'px-6 pb-24 pt-20 sm:pb-32 lg:px-8 lg:py-32' %}
+        {% if form.posted_successfully? %}
+          <h2 class="h5 pb-12 form-status form-status-list form__message" tabindex="-1" autofocus>
+            {{ 'templates.contact.form.post_success' | t }}
+          </h2>
+        {% elsif form.errors %}
+          <div class="form__message">
+            <h2 class="h5 pb-12 form-status caption-large text-body" role="alert" tabindex="-1" autofocus>
+              {{ 'templates.contact.form.error_heading' | t }}
+            </h2>
+          </div>
+          <ul class="form-status-list caption-large" role="list">
+            <li>
+              <a href="#ContactForm-email" class="link">
+                {{ form.errors.translated_fields.email | capitalize }}
+                {{ form.errors.messages.email }}
+              </a>
+            </li>
+          </ul>
+        {% endif %}
+
+        <div class="mx-auto max-w-xl lg:max-w-lg">
+          <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="ContactForm-name" class="block leading-6 ">
+                {{- 'templates.contact.form.name' | t -}}
+              </label>
+              <div class="mt-2.5">
+                <input
+                  type="text"
+                  name="contact[{{ 'templates.contact.form.name' | t }}]"
+                  value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                  placeholder="{{ 'templates.contact.form.name' | t }}"
+                  id="ContactForm-name"
+                  autocomplete="name"
+                  class="block bg-transparent border-b-2 border-dashed border-[var(--Black)] outline-none w-full pt-2 placeholder:text-[1.25rem] text-[1.4rem]"
+                >
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="ContactForm-name" class="block  leading-6 ">
+                {{- 'templates.contact.form.email' | t }}
+                <span aria-hidden="true">*</span>
+              </label>
+              <div class="mt-2.5">
+                <input
+                  type="email"
+                  name="contact[email]"
+                  id="ContactForm-email"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                  autocomplete="email"
+                  {% if form.errors contains 'email' %}
+                    aria-invalid="true"
+                    aria-describedby="ContactForm-email-error"
+                  {% endif %}
+                  placeholder="{{ 'templates.contact.form.email' | t }}"
+                  class="block bg-transparent border-b-2 border-dashed border-[var(--Black)] outline-none w-full pt-2 placeholder:text-[1.25rem] text-[1.4rem]"
+                >
+                {%- if form.errors contains 'email' -%}
+                  <small class="contact__field-error" id="ContactForm-email-error">
+                    <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+                    <span class="form__message">
+                      {{- form.errors.translated_fields.email | capitalize }}
+                      {{ form.errors.messages.email -}}
+                    </span>
+                  </small>
+                {%- endif -%}
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="ContactForm-body" class="block  leading-6 ">
+                {{- 'templates.contact.form.comment' | t -}}
+              </label>
+              <div class="mt-2.5">
+                <textarea
+                  name="message"
+                  id="ContactForm-body"
+                  rows="10"
+                  placeholder="{{ 'templates.contact.form.comment' | t }}"
+                  class="block bg-transparent border-b-2 border-dashed border-[var(--Black)] outline-none w-full pt-2 placeholder:text-[1.25rem] text-[1.4rem]"
+                >
+                {{- form.body -}}
+                </textarea>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 flex justify-end">
+            <button
+              type="submit"
+              class="rounded-full border-[var(--Black)] border-2 bg-[var(--Gelb-2)] px-3.5 py-1.5 text-center shadow-sm hover:bg-[var(--Gelb-1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--Gelb-1)]"
+            >
+              {{ 'templates.contact.form.send' | t }}
+            </button>
+          </div>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "headline",
+      "name": "Headline",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "headline",
+          "label": "Text",
+          "default": "Hilfe ist immer zur Stelle"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "name": "Paragraph",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "paragraph",
+          "label": "Text",
+          "default": "Bei uns endet die Unterstützung nicht nach dem Kauf. Wir sind für dich da, um sicherzustellen, dass jedes deiner Projekte ein voller Erfolg wird. Fragen? Wir haben die Antworten und die Lösungen."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact form",
+      "blocks": [
+        {
+          "type": "headline",
+          "settings": {
+            "headline": "Hilfe ist immer zur Stelle"
+          }
+        },
+        {
+          "type": "paragraph",
+          "settings": {
+            "paragraph": "Bei uns endet die Unterstützung nicht nach dem Kauf. Wir sind für dich da, um sicherzustellen, dass jedes deiner Projekte ein voller Erfolg wird. Fragen? Wir haben die Antworten und die Lösungen."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
