@@ -1,7 +1,9 @@
-### Attention - To-Do
+## Attention - To-Do
 
-- [ ] Simplify file contents
-- [ ] Remove tailwindcss classes
+<p align="center">
+    - [ ] Simplify file contents
+    - [ ] Remove tailwindcss classes
+</p>
 
 # HH-Dev Shopify Theme Generator
 
