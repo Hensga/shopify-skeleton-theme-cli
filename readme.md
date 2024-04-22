@@ -1,3 +1,8 @@
+### Attention - To-Do
+
+- [ ] Simplify file contents
+- [ ] Remove tailwindcss classes
+
 # HH-Dev Shopify Theme Generator
 
 This is a simple Command Line Interface (CLI) tool designed to quickly and efficiently generate Shopify skeleton theme structures. This tool facilitates developers to jumstart their Shopify theme development by providing a solid base structure.
