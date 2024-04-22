@@ -1,7 +1,10 @@
 ## Attention - To-Do
 
 - [ ] Simplify file contents
-- [ ] Remove tailwindcss classes
+  - [ ] Remove tailwindcss classes
+        \
+        \
+        \
 
 # HH-Dev Shopify Theme Generator
 
