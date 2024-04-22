@@ -2,9 +2,9 @@
 
 - [ ] Simplify file contents
   - [ ] Remove tailwindcss classes
-        \
-        \
-        \
+
+<br></br>
+<br></br>
 
 # HH-Dev Shopify Theme Generator
 
